@@ -1,25 +1,28 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <SFML\Graphics\Rect.hpp>
+#include <SFML/Audio.hpp>
 
 const int WIDTH = 900, HEIGHT = 900;
 
 sf::Vector2f velocity(0, 0);
 
-	void jump()
-	{
-		velocity.y = -1.35f;
-	}
-	
+int Scoreboard = 0;
+
+void jump()
+{
+	velocity.y = -1.4f;
+}
+
 int main()
 {
 	//state gameState = title;
 
 	int state = 0;
 
-	
+
 	sf::RectangleShape menuBox;
-	menuBox.setSize(sf::Vector2f(300.f, 100));
+	menuBox.setSize(sf::Vector2f(325.f, 100));
 	menuBox.setPosition(300, 400);
 	menuBox.setFillColor(sf::Color(255, 0, 0));
 
@@ -34,16 +37,16 @@ int main()
 
 	backText.loadFromFile("textures/mariomoving.png");
 
-	
 
-	
+
+
 
 	sf::Sprite backSprite;
 	backSprite.setScale(3, 3);
+	backSprite.setOrigin(13, 0);
+	backSprite.setPosition(10, 750);
 
-	backSprite.setPosition(100, 750);
-
-	backSprite.setPosition(WIDTH / 2, HEIGHT / 2);
+	backSprite.setPosition(WIDTH / 12, HEIGHT / 4);
 	backSprite.setTexture(backText);
 
 	sf::Sprite backgroundSprite;
@@ -51,39 +54,73 @@ int main()
 	//backgroundSprite.setScale(6, 6);
 
 
+	sf::Sprite aspike;
+	sf::Sprite bspike;
+
+
+	sf::Texture spikes;
+
+	spikes.loadFromFile("Textures/obstacles.png");
+	bspike.setTexture(spikes);
+	bspike.setScale(3, 3);
+	bspike.setPosition(1975, 750);
+	aspike.setTexture(spikes);
+	aspike.setScale(3, 3);
+	aspike.setPosition(1900, 750);
+
 	background.loadFromFile("textures/background.png");
 	backgroundSprite.setTexture(background);
 
 	sf::Sprite secondbackground;
 
-		secondbackground.setTexture(background);
-		secondbackground.setPosition(900, 0);
+	secondbackground.setTexture(background);
+	secondbackground.setPosition(900, 0);
 
-		sf::Sprite thirdbackground;
+	sf::Sprite thirdbackground;
 
-		thirdbackground.setTexture(background);
-		thirdbackground.setPosition(1800, 0);
+	thirdbackground.setTexture(background);
+	thirdbackground.setPosition(1800, 0);
 
-		sf::Sprite fourthbackground;
+	sf::Sprite fourthbackground;
 
-		fourthbackground.setTexture(background);
-		fourthbackground.setPosition(2700, 0);
+	fourthbackground.setTexture(background);
+	fourthbackground.setPosition(2700, 0);
 
-		sf::Sprite fifthbackground;
+	sf::Sprite fifthbackground;
 
-		fifthbackground.setTexture(background);
-		fifthbackground.setPosition(3600, 0);
+	fifthbackground.setTexture(background);
+	fifthbackground.setPosition(3600, 0);
 
 
 	sf::View camera(sf::Vector2f(50, 50), sf::Vector2f(150, 150));
 	camera.setSize(200, 200);
 	camera.setCenter(0, 0);
-	
+
 	sf::Sprite MarioJump;
 	sf::Texture jumpsprite;
+	sf::IntRect marioJumpA[1];
+	marioJumpA[0] = sf::IntRect(0, 0, 34, 28);
 
 	jumpsprite.loadFromFile("textures/mariojump.png");
+
+	sf::Sprite coin1;
+	sf::Sprite coin2;
+	sf::Texture coin;
+
+	coin.loadFromFile("textures/coin.png");
+
+	coin1.setTexture(coin);
+	coin1.setPosition(400, 625);
+
+	coin2.setTexture(coin);
+	coin2.setPosition(700, 625);
+
+
 	MarioJump.setTexture(jumpsprite);
+	MarioJump.setTextureRect(marioJumpA[0]);
+	MarioJump.setOrigin(0, 0);
+	MarioJump.setScale(3, 3);
+	MarioJump.setPosition(0, 0);
 
 	bool isMovingUp = false;
 	bool isMovingDown = false;
@@ -91,134 +128,344 @@ int main()
 	bool isMovingRight = false;
 	bool jumping = false;
 	bool zoom = false;
+	bool facingleft = false;
 
+	sf::Sprite monsterg;
+	sf::Sprite monsterf;
+	sf::Sprite monstere;
+	sf::Sprite monsterd;
+	sf::Sprite monsterc;
+	sf::Sprite monsterb;
 	sf::Sprite monster;
 	sf::Texture Goomba;
 
 	Goomba.loadFromFile("textures/goomba.png");
 
+	
+
+	monsterf.setTexture(Goomba);
+	monsterf.setScale(1.75, 1.75);
+	monsterf.setPosition(3100, 790);
+
+	monstere.setTexture(Goomba);
+	monstere.setScale(1.75, 1.75);
+	monstere.setPosition(2800, 790);
+
+	monsterd.setTexture(Goomba);
+	monsterd.setScale(1.75, 1.75);
+	monsterd.setPosition(2550, 790);
+
+	monsterc.setTexture(Goomba);
+	monsterc.setScale(1.75, 1.75);
+	monsterc.setPosition(2400, 790);
+
+	monsterb.setTexture(Goomba);
+	monsterb.setScale(1.75, 1.75);
+	monsterb.setPosition(800, 790);
+
 	monster.setTexture(Goomba);
-	monster.setScale(1.5, 1.5);
-	monster.setPosition(700, 790);
+	monster.setScale(1.75, 1.75);
+	monster.setPosition(300, 790);
 
 	sf::Sprite aplatform;
 	sf::Texture platform;
+	platform.loadFromFile("textures/platform.png");
 
-	aplatform.setPosition(500, 650);
+	sf::Sprite bplatform;
+
+	bplatform.setTexture(platform);
+
+	bplatform.setPosition(1400, 600);
+	bplatform.setScale(4, 4);
+
+
+	aplatform.setPosition(1200, 700);
 	aplatform.setScale(4, 4);
 
-	platform.loadFromFile("textures/platform.png");
 	aplatform.setTexture(platform);
+
+	sf::Sprite cplatform;
+	cplatform.setTexture(platform);
+	cplatform.setPosition(1600, 500);
+	cplatform.setScale(4, 4);
+
+	sf::Sprite dplatform;
+	dplatform.setTexture(platform);
+	dplatform.setPosition(1800, 400);
+	dplatform.setScale(4, 4);
+
+	sf::Sprite eplatform;
+	eplatform.setTexture(platform);
+	eplatform.setScale(4, 4);
+	eplatform.setPosition(3900, 690);
+	
+		
+		sf::Sprite fplatform;
+	fplatform.setTexture(platform);
+	fplatform.setScale(4, 4);
+	fplatform.setPosition(4000, 590);
 
 	sf::Clock clock;
 	int imgCount = 0;
 	float timer = 0;
 
 	sf::Text myText;
+	sf::Text Title;
 
 	sf::Font myFont;
 
+	sf::Sprite mariopipeone;
+	sf::Texture mariopipe;
+
+	mariopipe.loadFromFile("textures/mariopipeb.png");
+	mariopipeone.setTexture(mariopipe);
+
+	mariopipeone.setPosition(10, 675);
+	mariopipeone.setScale(2, 2);
+
+	sf::Music music;
+	if (!music.openFromFile("textures/ThemeSong.wav"))
+		return -1; // error
+	music.play();
+
+	sf::SoundBuffer buffer;
+	if (!buffer.loadFromFile("textures/CoinSound.wav"))
+		return -1;
+
+	sf::Sound sound;
+	sound.setBuffer(buffer);
+
+
 	while (window.isOpen()) {
+
 		sf::Event event;
 		while (window.pollEvent(event)) {
-			
+
+			;
+
 			if (event.type == sf::Event::Closed)
 				window.close();
 			if (event.type == sf::Event::KeyPressed) {
-				/*  
-				if (event.key.code == sf::Keyboard::W) {
-					isMovingUp = true;
-				}
-				if (event.key.code == sf::Keyboard::S) {
-					isMovingDown = true;
-				}
-				*/
-				if (event.key.code == sf::Keyboard::Right) {
-					isMovingLeft = true;
-				}
-				if (event.key.code == sf::Keyboard::Left) {
-					
-					isMovingRight = true;
-				}
-				if (event.key.code == sf::Keyboard::Tab)
-				{
-					zoom = true;
-				}
-				if (event.key.code == sf::Keyboard::Space) {
-					jumping = true;
-					window.draw(MarioJump);
 
+				if (event.key.code == sf::Keyboard::Up) {
+					jumping = true;
 					if (velocity.y == 0)
 						jump();
-
 				}
+
+				if (event.key.code == sf::Keyboard::Enter) {
+
+					state = 1;
+				}
+
+
+				if (event.key.code == sf::Keyboard::Right) {
+					isMovingRight = true;
+					//if (facingleft) {
+						//backSprite.scale(-1, 0);
+						//facingleft = false;
+					//}
+				}
+
+				if (event.key.code == sf::Keyboard::Left) {
+
+					isMovingLeft = true;
+					/*if (!facingleft){
+						backSprite.scale(-1, 0);
+						facingleft = true;*/
+				}
+
 			}
+			if (event.key.code == sf::Keyboard::Tab)
+			{
+				zoom = true;
+			}
+			if (event.key.code == sf::Keyboard::Space) {
+				jumping = true;
+				window.draw(MarioJump);
+
+				if (velocity.y == 0)
+					jump();
+
+			}
+
 			if (event.type == sf::Event::KeyReleased) {
-				if (event.key.code == sf::Keyboard::W) {
+				if (event.key.code == sf::Keyboard::Up) {
 					isMovingDown = false;
 				}
 				if (event.key.code == sf::Keyboard::S) {
 					isMovingUp = false;
 				}
 				if (event.key.code == sf::Keyboard::Right) {
-					isMovingLeft = false;
+					isMovingRight = false;
 				}
 				if (event.key.code == sf::Keyboard::Left) {
-						isMovingRight = false;
+					isMovingLeft = false;
 				}
 				if (event.key.code == sf::Keyboard::Tab)
 				{
 					zoom = false;
 				}
 				if (event.key.code == sf::Keyboard::Space) {
-					;
+
 				}
 			}
 		}
+
 		switch (state) {
 		case 0:
-			
-			
+
+
 			myFont.loadFromFile("font/SuperMario256.ttf");
+
+			Title.setFont(myFont);
+			Title.setPosition(470, 200);
+			Title.setOrigin(150, 0);
+			Title.setString("Mario!");
+			Title.setCharacterSize(75);
+			Title.setFillColor(sf::Color::Blue);
 
 			myText.setFont(myFont);
 			myText.setPosition(450, 450);
+			myText.setOrigin(150, 0);
 			myText.setString("Press enter to start");
 			myText.setCharacterSize(24);
-			myText.setFillColor(sf::Color::White);
+			myText.setFillColor(sf::Color::Black);
 
 
-			
+
 			window.clear();
 			window.draw(menuBox);
 			window.draw(myText);
+			window.draw(Title);
 			window.display();
 
 			break;
+
+
 		case 1:
 
 
 
-			velocity.y += 0.004;
+			velocity.y += 0.005;
 			if (backSprite.getPosition().y > HEIGHT / 1.2 && velocity.y > 0)
 				velocity.y = 0;
 
-			if (backSprite.getGlobalBounds().intersects(monster.getGlobalBounds()))
-				backSprite.setPosition(100, 750);
+			if (backSprite.getGlobalBounds().intersects(aspike.getGlobalBounds())) {
+				state = 2;
+				backSprite.setPosition(WIDTH / 12, HEIGHT / 4);
+			}
+			if (backSprite.getGlobalBounds().intersects(bspike.getGlobalBounds())) {
+				state = 2;
+				backSprite.setPosition(WIDTH / 12, HEIGHT / 4);
+			}
 
 			if (backSprite.getGlobalBounds().intersects(aplatform.getGlobalBounds())) {
 				if (backSprite.getGlobalBounds().top + 98 < aplatform.getGlobalBounds().top && velocity.y > 0) {
 					velocity.y = 0;
+					jump();
+				}
+			}
+
+			if (backSprite.getGlobalBounds().intersects(coin1.getGlobalBounds())) {
+
+				coin1.setPosition(1000000, 1000000);
+				sound.play();
+			}
+
+
+			if (backSprite.getGlobalBounds().intersects(coin2.getGlobalBounds())) {
+				coin2.setPosition(1000000, 1000000);
+				sound.play();
+			}
+
+
+			if (backSprite.getGlobalBounds().intersects(monster.getGlobalBounds())) {
+				if (backSprite.getGlobalBounds().top + 98 < monster.getGlobalBounds().top && velocity.y > 0) {
+					velocity.y = 2;
+					monster.setPosition(-10000, -1000);
+					jump();
+				}
+				else {
+					backSprite.setPosition(10, 750);
+				}
+			}
+
+
+			if (backSprite.getGlobalBounds().intersects(monsterb.getGlobalBounds())) {
+				if (backSprite.getGlobalBounds().top + 98 < monsterb.getGlobalBounds().top && velocity.y > 0) {
+					velocity.y = 2;
+					monsterb.setPosition(-10000, -1000);
+					jump();
+				}
+				else {
+					monsterb.setPosition(10, 750);
 				}
 			}
 
 
 
+			if (backSprite.getGlobalBounds().intersects(mariopipeone.getGlobalBounds())) {
+				if (backSprite.getGlobalBounds().top + 98 < mariopipeone.getGlobalBounds().top && velocity.y > 0) {
+					velocity.y = 0;
+
+
+				}
+
+			}
 			velocity.x = 0;
 			if (isMovingLeft)
 				velocity.x -= 0.7;
 			if (isMovingRight)
 				velocity.x += 0.7;
+
+
+			if (backSprite.getPosition().x < monster.getPosition().x) {
+				monster.move(-0.05, 0);
+			}
+			else
+			{
+
+				monster.move(0.05, 0);
+
+			}
+			if (backSprite.getPosition().x < monsterb.getPosition().x) {
+				monsterb.move(-0.02, 0);
+			}
+			else
+			{
+
+				monsterb.move(0.05, 0);
+
+			}
+
+
+			//if (backSprite.getPosition().y < coin1.getPosition().y) {
+			//coin1.move(0, 0.001);
+		//}
+
+			if (backSprite.getGlobalBounds().intersects(bplatform.getGlobalBounds())) {
+				if (backSprite.getGlobalBounds().top + 98 < bplatform.getGlobalBounds().top && velocity.y > 0) {
+					velocity.y = 0;
+					jump();
+				}
+			}
+
+			if (backSprite.getGlobalBounds().intersects(cplatform.getGlobalBounds())) {
+				if (backSprite.getGlobalBounds().top + 98 < cplatform.getGlobalBounds().top && velocity.y > 0) {
+					velocity.y = 0;
+					jump();
+				}
+			}
+
+			if (backSprite.getGlobalBounds().intersects(dplatform.getGlobalBounds())) {
+				if (backSprite.getGlobalBounds().top + 98 < dplatform.getGlobalBounds().top && velocity.y > 0) {
+					velocity.y = 0;
+					jump();
+				}
+			}
+
+
 
 
 
@@ -252,18 +499,40 @@ int main()
 				//backSprite.setPosition(0, 750);
 			//}
 
-			if (isMovingLeft || isMovingRight) {
-				backSprite.setTexture(backText);
-				backSprite.setTextureRect(rect[imgCount]);
-			}
-			//	else if (velocity.y != 0) {
 
-					//backSprite.setTexture(jumpsprite);
-					//backSprite.setTextureRect(sf::IntRect(0, 0, 50, 50));
-			//	}
+
+
+			if (isMovingLeft || isMovingRight) {
+				timer = clock.getElapsedTime().asSeconds();
+				if (timer > 0.25f)
+				{
+					if (imgCount < 7)
+						imgCount++;
+					else
+						imgCount = 0;
+					clock.restart();
+				}
+			}
 			else
-				backSprite.setTexture(backText);
-			backSprite.setTextureRect(rect[0]);
+				imgCount = 0;
+
+
+			//	if (velocity.y != 0) {
+				//	backSprite.setTexture(jumpsprite);
+			//	}
+				//else {
+			if (isMovingRight || isMovingLeft)
+				(backSprite.setTextureRect(rect[imgCount]));
+			else
+				backSprite.setTextureRect(rect[0]);
+			//	}
+
+
+				/*	if (jumping)
+						(backSprite.setTextureRect(marioJumpA[imgCount]));
+					else
+						backSprite.setTextureRect(marioJumpA[0]); */
+
 
 			window.clear();
 			window.draw(backgroundSprite);
@@ -272,10 +541,67 @@ int main()
 			window.draw(fourthbackground);
 			window.draw(fifthbackground);
 			window.draw(aplatform);
+			window.draw(bplatform);
+			window.draw(dplatform);
+			window.draw(cplatform);
+			window.draw(aspike);
+			window.draw(bspike);
+			window.draw(mariopipeone);
 			window.draw(monster);
+			window.draw(monsterb);
+			window.draw(monsterc);
+			window.draw(monsterd);
+			window.draw(monstere);
+			window.draw(monsterf);
+			window.draw(monsterg);
+			window.draw(coin1);
+			window.draw(coin2);
+			window.draw(eplatform);
+			window.draw(fplatform);
 			window.draw(backSprite);
-			window.draw(menuBox);
 			window.display();
+
+
+			break;
+		case 2:
+			camera.setCenter(450, 450);
+			window.setView(camera);
+
+			myFont.loadFromFile("font/SuperMario256.ttf");
+
+			Title.setFont(myFont);
+			Title.setPosition(470, 200);
+			Title.setOrigin(150, 0);
+			Title.setString("Game Over!");
+			Title.setCharacterSize(75);
+			Title.setFillColor(sf::Color::Blue);
+
+			myText.setFont(myFont);
+			myText.setPosition(450, 450);
+			myText.setOrigin(150, 0);
+			myText.setString("Press enter to play again");
+			myText.setCharacterSize(24);
+			myText.setFillColor(sf::Color::Black);
+
+
+
+
+			window.clear();
+			window.draw(menuBox);
+			window.draw(myText);
+			window.draw(Title);
+			window.display();
+
+			//	else if (velocity.y != 0) {
+
+					//backSprite.setTexture(jumpsprite);
+					//backSprite.setTextureRect(sf::IntRect(0, 0, 50, 50));
+			//	}
+			/*else
+				backSprite.setTexture(backText);
+			backSprite.setTextureRect(rect[0]);*/
+
+
 		}
 	}
 }
